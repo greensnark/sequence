@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>SEQUENCE Brace Style Syntax</title>
+</head>
+<body>
+
+<pre>
+
+# A more formal description of the valid syntax for sequence
+# diagrams written using the "brace style" syntax.
+
+# A sequence diagram consists of the description of a single
+# method.
+
+<b>&lt;sequence_diagram&gt; ::= &lt;method_description&gt;</b>
+
+# The description of a method is the signature of the method
+# followed by a semicolon or a method body.
+
+<b>&lt;method_description&gt; ::= &lt;method_signature&gt; ( ";" | &lt;method_body&gt; )</b>
+
+# A method signature is the identifier of the object being called
+# followed by the method being called on the object and with an optional
+# return value. The identifier of the object being called is separated
+# from the method identifier by a period. The optional return value is
+# preceeded by a -&gt;
+
+<b>&lt;method_signature&gt; ::= &lt;object_identifier&gt; "." &lt;method_identifier&gt; [ "-&gt;" &lt;return_value&gt; ]</b>
+
+# The identifier of an object is composed of up to three parts. At least
+# one must be present and they must appear in the order object name,
+# class name, and stereotype.  The class name, if present is preceeded
+# by a colon. The stereotype, if present, is surrounded by &lt; and &gt;
+
+<b>&lt;object_identifier&gt; ::= &lt;object_name&gt; [ ":" &lt;class_name&gt; ] [ "&lt;" &lt;stereotype&gt; "&gt;" ] |
+                        ":" &lt;class_name&gt; [ "&lt;" &lt;stereotype&gt; "&gt;" ] |
+                        "&lt;" &lt;stereotype&gt; "&gt;"</b>
+
+# The name of an object is just a string
+
+<b>&lt;object_name&gt; ::= &lt;string_identifier&gt;</b>
+
+# The name of a class is just a string
+
+<b>&lt;class_name&gt; ::= &lt;string_identifier&gt;</b>
+
+# A stereotype is just a string
+
+<b>&lt;stereotype&gt; ::= &lt;string_identifier&gt;</b>
+
+# A string is either a string with no spaces in it, a string surrounded
+# with double quotes or a string surrounded with single quotes. The
+# double quoted string can include an escaped double quote, thus
+# \&quot;, and the single quoted string can include an escaped single
+# quote, thus \'.
+
+<b>&lt;string_identifier&gt; ::= 'An unquoted string with no spaces or a string
+                         surrounded by double quotes with all enclosed
+                         double quotes escaped with \ or a string
+                         surrounded by single quotes with all enclosed
+                         single quotes escaped with \'</b>
+
+# The identifier for a method starts with an optional marker to
+# indicate repeated calls. This is followed by an optional condition to
+# express when the method is called.  There must be a method name and
+# this can be followed by optional method arguments.
+
+<b>&lt;method_identifier&gt; ::= [ &lt;iteration_marker&gt; ] [ &lt;condition&gt; ] &lt;method_name&gt; [ &lt;method_args&gt; ]</b>
+
+# The iteration marker is just a *
+
+<b>&lt;iteration_marker&gt; ::= "*"</b>
+
+# A condition is a string surrounded by [ and ]. It can include a ] if
+# it is escaped by \.
+
+<b>&lt;condition&gt; ::= 'A string starting with an open square bracket [ and
+                 ending with a close square bracket ] and with any
+                 close square brackets inside it escaped with \'</b>
+
+# The name of a method is either just a string or it can be a
+# stereotype surrounded by &lt; and &gt;
+
+<b>&lt;method_name&gt; ::= &lt;string_identifier&gt; | "&lt;" &lt;stereotype&gt; "&gt;"</b>
+
+# The arguments for a method are just a string surrounded by ( and
+# ). It can include a ) if it is escaped with \.
+
+<b>&lt;method_args&gt; ::= 'A string starting with an open paren ( and ending
+                   with a close paren ) and with any close parens
+                   inside it escaped with \'</b>
+
+# The return value from a method is just a string
+
+<b>&lt;return_value&gt; ::= &lt;string_identifier&gt;</b>
+
+# A method body is zero or more method descriptions surrounded by { and
+# }
+
+<b>&lt;method_body&gt; ::= "{" { &lt;method_description&gt; } "}"</b>
+
+</pre>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<examples>
+    <example name="One" short-description="The only example. This parser is deprecated.">
+<![CDATA[(Comments newComment
+  (CommentFactory newComment "the new comment"
+    (Comment new
+      (IDGen nextID newId)
+      (Transaction add<this>)
+      (Comments getSize size)))
+  (Comments addToCache))]]>
+    </example>
+</examples>

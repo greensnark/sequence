@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>Headless</title>
+</head>
+<body>
+<p>You can run SEQUENCE without displaying a screen. In this mode it reads an input file provided on the command line
+and writes out a file containing an image of the resulting sequence diagram in <code>.png</code> format. You
+need to supply the <code>--headless</code> command line option and follow it by the name of the file containing the
+text describing the diagram. The name of the output file is formed by stripping the last extension off the input file
+name and then appending <code>.png</code>.</p>
+
+<pre>java -jar sequence.jar --headless my_sequence_diagram.txt</pre>
+
+</body>
+</html>

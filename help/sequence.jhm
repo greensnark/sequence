@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/map_2_0.dtd">
+<map version="2.0">
+    <mapID target="top" url="index.html"/>
+    <mapID target="commandline" url="commandline.html"/>
+    <mapID target="headless" url="headless.html"/>
+    <mapID target="syntax" url="syntax/index.html"/>
+    <mapID target="syntax.lisp" url="syntax/lisp.html"/>
+    <mapID target="com.zanthan.sequence.parser.SimpleParserImpl" url="syntax/lisp.html"/>
+    <mapID target="syntax.brace" url="syntax/brace.html"/>
+    <mapID target="com.zanthan.sequence.parser.alternate.AlternateParserImpl" url="syntax/brace.html"/>
+</map>

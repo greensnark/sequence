@@ -1,0 +1,145 @@
+<?xml version='1.0' ?>
+<project name="com.zanthan.sequence"
+    default="all">
+
+    <property name="zanthan.lib.dir"
+        value="${basedir}/lib"/>
+
+    <property name="zanthan.classes.dir"
+        value="${basedir}/classes"/>
+
+    <property name="zanthan.classes-test.dir"
+        value="${basedir}/classes-test"/>
+
+    <property name="zanthan.src-test.dir"
+        value="${basedir}/src-test"/>
+
+    <property name="zanthan.properties-test.dir"
+        value="${basedir}/properties-test"/>
+
+    <property name="zanthan.logs.dir"
+        value="${basedir}/logs"/>
+
+    <path id="junit.jar">
+        <fileset dir="${zanthan.lib.dir}">
+            <include name="junit.jar"/>
+        </fileset>
+    </path>
+
+    <path id="log4j.jar">
+        <fileset dir="${zanthan.lib.dir}">
+            <include name="log4j.jar"/>
+        </fileset>
+    </path>
+
+    <path id="jlfgr.jar">
+        <fileset dir="${zanthan.lib.dir}">
+            <include name="jlfgr-1_0.jar"/>
+        </fileset>
+    </path>
+
+    <path id="zanthan.classpath.compile">
+        <path refid="junit.jar"/>
+        <path refid="log4j.jar"/>
+        <path refid="jlfgr.jar"/>
+        <pathelement path="${zanthan.classes.dir}"/>
+    </path>
+
+    <path id="zanthan.classpath.test">
+        <pathelement path="${zanthan.properties-test.dir}"/>
+        <path refid="zanthan.classpath.compile"/>
+        <pathelement path="${zanthan.classes.dir}"/>
+        <pathelement path="${zanthan.classes-test.dir}"/>
+    </path>
+
+    <target name="all"
+        depends="clean, prepare,compile,testTokenizer,testParser,testLayout"/>
+
+    <target name="clean">
+
+        <delete includeEmptyDirs="true" failOnError="false">
+            <fileset dir="${zanthan.classes-test.dir}"/>
+        </delete>
+
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="${zanthan.classes-test.dir}"/>
+        <mkdir dir="${zanthan.properties-test.dir}"/>
+        <mkdir dir="${zanthan.logs.dir}"/>
+        <delete dir="${zanthan.logs.dir}">
+            <include name="*"/>
+        </delete>
+    </target>
+
+    <target name="compile"
+        depends="prepare">
+
+        <ant antfile="build.xml" target="compile"/>
+
+        <javac destdir="${zanthan.classes-test.dir}"
+            deprecation="true"
+            debug="true"
+            includeAntRuntime="false">
+            <src path="${zanthan.src-test.dir}"/>
+            <classpath refid="zanthan.classpath.compile"/>
+        </javac>
+
+        <copy todir="${zanthan.classes-test.dir}">
+            <fileset dir="${zanthan.src-test.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="testTokenizer"
+        depends="prepare,compile">
+
+        <junit fork="yes" printsummary="yes">
+            <formatter type="plain"/>
+            <classpath refid="zanthan.classpath.test"/>
+            <test name="com.zanthan.sequence.diagram.TestTokenizer"/>
+        </junit>
+    </target>
+
+    <target name="testParser"
+        depends="prepare,compile">
+
+        <junit fork="yes" printsummary="yes">
+            <formatter type="plain"/>
+            <classpath refid="zanthan.classpath.test"/>
+            <test name="com.zanthan.sequence.diagram.TestParser"/>
+        </junit>
+    </target>
+
+    <target name="testAlternateParser"
+        depends="prepare,compile">
+
+        <junit fork="yes" printsummary="yes">
+            <formatter type="plain"/>
+            <classpath refid="zanthan.classpath.test"/>
+            <test name="com.zanthan.sequence.diagram.TestAlternateParser"/>
+        </junit>
+    </target>
+
+    <target name="testLayout"
+        depends="prepare,compile">
+
+        <junit fork="yes" printsummary="yes">
+            <formatter type="plain"/>
+            <classpath refid="zanthan.classpath.test"/>
+            <test name="com.zanthan.sequence.diagram.TestLayout"/>
+        </junit>
+    </target>
+
+    <target name="testUnparser"
+        depends="prepare,compile">
+
+        <junit fork="yes" printsummary="yes">
+            <formatter type="plain"/>
+            <classpath refid="zanthan.classpath.test"/>
+            <test name="com.zanthan.sequence.diagram.TestUnparser"/>
+        </junit>
+    </target>
+</project>

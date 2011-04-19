@@ -1,0 +1,135 @@
+<examples>
+    <example name="Simple" short-description="The most basic example.">
+<![CDATA[// The simplest example. methodOne on objectOne calls methodTwo on objectTwo
+// and then methodTwo calls methodThree on objectThree etc. Notice how the name methodOne
+// only appears as a tooltip on the objectOne method timeline. The other method names
+// are also shown above the line representing the call
+objectOne.methodOne {
+  objectTwo.methodTwo {
+    objectThree.methodThree;
+    objectFour.methodFour;
+  }
+}]]>
+    </example>
+    <example name="Return Values" short-description="How to specify return values from method calls.">
+<![CDATA[// This is similar to the simple example but shows return values. These
+// are shown after the method name, preceeded by ->. The spaces before and after
+// the -> are optional
+objectOne.methodOne {
+  objectTwo.methodTwo -> value {
+    objectThree.methodThree -> anotherValue;
+    objectFour.methodFour->finalValue;
+  }
+}]]>
+    </example>
+    <example name="Method Arguments" short-description="Method calls can have arguments.">
+<![CDATA[// Method arguments are placed after the method name, surrounded by ( and ). You
+// can place anything you want inside the ( and ) but if you want to include a ) you'll
+// have to escape it with a \
+objectOne.methodOne {
+  objectTwo.methodTwo(foo, bar) -> value {
+    objectThree.methodThree(value) -> anotherValue;
+    objectFour.methodFour();
+  }
+}]]>
+    </example>
+    <example name="Class Names" short-description="You can show which class an object belongs to.">
+<![CDATA[// The name of an object can optionally be followed by a class name. The class name
+// must be preceeded by a : Note also that spaces can used between object, class,
+// and method names, and before method arguments.
+objectOne:classOne.methodOne {
+  objectTwo :classTwo.methodTwo(foo, bar) -> value {
+    objectThree.methodThree (value) -> anotherValue;
+    objectFour : classFour . methodFour ();
+  }
+}]]>
+    </example>
+    <example name="Object Stereotypes" short-description="Objects can also have stereotypes.">
+<![CDATA[// In addition to a class name an object can have an optional stereotype. This
+// is surrounded by << and >> and must follow the class name. Any combination of object
+// name, class name and stereotype can be used but they must appear in that order.
+objectOne:classOne.methodOne {
+  objectTwo :classTwo<<type>>.methodTwo(foo, bar) -> value {
+    <<type_three>> . methodThree (value) -> anotherValue;
+    :classFour <<type_four>>. methodFour ();
+  }
+}]]>
+    </example>
+    <example name="Iteration" short-description="The iteration marker can preceed a method name.">
+<![CDATA[// Method names can be preceeded by a * to indicate that they repeat.
+// The * must follow the . that separates the object from the method. You can
+// use spaces if you want to between the * and the method name.
+objectOne.methodOne {
+  objectTwo.methodTwo(foo, bar) -> value {
+    objectThree.* methodThree(value) -> anotherValue;
+    objectFour . *methodFour();
+  }
+}]]>
+    </example>
+    <example name="Conditions" short-description="Methods can have conditions.">
+<![CDATA[// Method names can be preceeded by a condition in [ and ]. This must
+// follow any *. Use *[condition] for repeating the call while a condition
+// is true and [condition] for calling the method once if a condition is true.
+objectOne.methodOne {
+  objectTwo.methodTwo(foo, bar) -> value {
+    objectThree.*[while != null] methodThree(value) -> anotherValue;
+    objectFour . [> 10] methodFour();
+  }
+}]]>
+    </example>
+    <example name="Method Stereotypes" short-description="Stereotypes can be used instead of method names.">
+<![CDATA[// Instead of a method name a stereotype, surrounded by << and >> can be used.
+objectOne.methodOne {
+  objectTwo.methodTwo(foo, bar) -> value {
+    objectThree.*[while != null] methodThree(value) -> anotherValue;
+    objectFour . [> 10] <<cancel>>();
+  }
+}]]>
+    </example>
+    <example name="Callbacks" short-description="A method can call another method on the same object.">
+<![CDATA[// Objects are layed out in the order in which they appear in the description. A
+// method can call another method on the same object or a method on an object that preceeds
+// it in the description. The identification of the target of the call is done using the
+// complete identifier for the object, including any class name and stereotype it may have.
+objectOne.methodOne {
+  objectTwo:Class.methodTwo {
+    objectThree.methodThree {
+      objectThree.thirdMethod;
+    }
+    objectFour.methodFour {
+      objectTwo:Class.anotherMethod;
+    }
+  }
+}]]>
+    </example>
+    <example name="Names" short-description="What are the limitations on names.">
+<![CDATA[// Names of objects, methods, or classes can not include whitespace or any
+// of the characters : * - ( ) [ ] . { } < > " ' If you want to use any of these
+// you have to surround the name with double or single quotes. \ can be used to
+// escape a double quote in a double quoted string or a single quote in a
+// single quoted string.
+objectOne."method One" {
+  objectTwo.'method\'s Two' {
+    objectThree.methodThree {
+      objectThree.thirdMethod -> "some value";
+    }
+    objectFour.methodFour {
+      objectTwo.anotherMethod;
+    }
+  }
+}]]>
+    </example>
+    <example name="All" short-description="Simple example a range of features">
+<![CDATA[// This example demonstrates a range of features
+Comments.newComment {
+  CommentFactory.newComment -> "the new comment" {
+    Comment.<<create>> {
+      IDGen.nextID -> newId;
+      Transaction.add(this);
+      Comments.getSize -> size;
+    }
+  Comments.addToCache(the new comment);
+  }
+}]]>
+    </example>
+</examples>

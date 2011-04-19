@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="DEBUG" class="com.zanthan.log4j.FileAppender">
+        <param name="File" value="sequencelogs/debug.log"/>
+        <param name="Threshold" value="DEBUG"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{ISO8601} %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="INFO" class="com.zanthan.log4j.FileAppender">
+        <param name="File" value="sequencelogs/info.log"/>
+        <param name="Threshold" value="INFO"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{ISO8601} %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="WARN" class="com.zanthan.log4j.FileAppender">
+        <param name="File" value="sequencelogs/warn.log"/>
+        <param name="Threshold" value="WARN"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{ISO8601} %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="ERROR" class="com.zanthan.log4j.FileAppender">
+        <param name="File" value="sequencelogs/error.log"/>
+        <param name="Threshold" value="ERROR"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{ISO8601} %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="ERROR"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{ISO8601} %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.zanthan">
+        <level value="error"/>
+        <appender-ref ref="DEBUG"/>
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="WARN"/>
+        <appender-ref ref="ERROR"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+</log4j:configuration>
+

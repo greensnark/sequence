@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Command Line</title>
+</head>
+<body>
+<p>To run SEQUENCE you normally just need to say</p>
+
+<pre>java -jar sequence.jar</pre>
+
+<p>However, there are some command line options you can specify. The <code>--headless</code> option is used
+when you want to generate a <code>.png</code> image from an input file without displaying the SEQUENCE screen.
+To use it you need to provide the option and follow it with the name of a file containing the text describing
+the diagram. For example:</p>
+
+<pre>java -jar sequence.jar --headless my_sequence_diagram.txt</pre>
+
+<p>If you don't supply an the <code>--headless</code> option then the first argument on the command line following
+<code>sequence.jar</code> is taken as the name of the initial directory to offer in the open dialog. For example:</p>
+
+<pre>java -jar sequence.jar some_dir/another_dir</pre>
+
+<p>Finally, if you want to be able to use the deprecated, though original, LISP style syntax for authoring
+sequence diagrams you need to supply the <code>--offer_parser_choice</code> option. For example:</p>
+
+<pre>java -jar sequence.jar --offer_parser_choice</pre>
+
+</body>
+</html>

@@ -1,0 +1,402 @@
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = false;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+  OUTPUT_DIRECTORY = "../../../../../../build/src/com/zanthan/sequence/parser/alternate";
+}
+
+PARSER_BEGIN(AlternateParser)
+
+package com.zanthan.sequence.parser.alternate;
+
+import java.io.*;
+import java.util.*;
+
+import com.zanthan.sequence.diagram.DiagramParserIface;
+import com.zanthan.sequence.diagram.MethodExecution;
+import com.zanthan.sequence.diagram.ObjectLifeLine;
+
+import org.apache.log4j.Logger;
+
+public class AlternateParser {
+
+  private static final Logger log = Logger.getLogger(AlternateParser.class);
+
+  private DiagramParserIface diagram;
+
+  private MethodExecution newMethodExecution;
+  private Stack methodExecutionStack;
+  private Map objectLifeLines;
+
+  private void initialize() {
+    if (log.isDebugEnabled()) {
+        log.debug("initialize()");
+    }
+    newMethodExecution = null;
+    methodExecutionStack = new Stack();
+    objectLifeLines = new HashMap();
+  }
+
+  void setDiagram(DiagramParserIface diagram) {
+    if (log.isDebugEnabled()) {
+        log.debug("setDiagram(" + diagram + ")");
+    }
+    this.diagram = diagram;
+  }
+
+  void parse(Reader r) throws ParseException {
+    if (log.isDebugEnabled()) {
+        log.debug("parse(" + r + ")");
+    }
+    initialize();
+    outermostMethodDescription();
+  }
+
+  void processSignature(ObjectIdentifier oi, MethodIdentifier mi, String returnValue) {
+      if (log.isDebugEnabled()) {
+          log.debug("processSignature(" + oi + ", " + mi + ", " + returnValue + ")");
+      }
+      String calledObjectName = oi.getName();
+	  ObjectLifeLine objectLifeLine = (ObjectLifeLine) objectLifeLines.get(calledObjectName);
+      if (objectLifeLine == null) {
+          objectLifeLine = diagram.newObjectLifeLine(calledObjectName, oi);
+          objectLifeLines.put(calledObjectName, objectLifeLine);
+          // Is this another root?
+          if (methodExecutionStack.isEmpty()) {
+              diagram.addRootObject(objectLifeLine);
+          }
+      }
+
+      // Create the new method to be executed
+      String calledMethodName = mi.getName();
+      newMethodExecution = diagram.newMethodExecution(objectLifeLine, calledMethodName, mi);
+      // See if we're currently executing a method. We won't be if this is a root
+      if (!methodExecutionStack.isEmpty()) {
+          // Get the current method being executed
+          MethodExecution currentMethodExecution = (MethodExecution) methodExecutionStack.peek();
+          // Add a call from the current method being executed to the new method
+          currentMethodExecution.addCall(diagram.newCall(currentMethodExecution, newMethodExecution, returnValue, null));
+      }
+      // Add the new method execution to the object life line being called
+      objectLifeLine.addMethodExecution(newMethodExecution);
+  }
+
+  String stripQuotes(String s, char quote) {
+      String t = s.substring(1, s.length() - 1);
+      if (t.indexOf(quote) == -1) {
+        return t;
+      }
+      StringBuffer sb = new StringBuffer();
+      int i = 0;
+      while (i < t.length()) {
+        char c = t.charAt(i);
+        if (c == '\\' && t.charAt(i+1) == quote) {
+          sb.append(quote);
+          i += 2;
+        } else {
+          sb.append(c);
+          i += 1;
+        }
+      }
+      return sb.toString();
+  }
+}
+
+PARSER_END(AlternateParser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < ITERATION_MARKER: "*" >
+|
+  < OPEN_BRACE: "{" >
+|
+  < CLOSE_BRACE: "}" >
+|
+  < STATEMENT_END: ";" >
+|
+  < PERIOD: "." >
+|
+  < RETURN_MARKER: "-" ">" >
+|
+  < STEREOTYPE: "<" "<" ( ~[">"] | ">" ~[">"] )+ ">" ">" >
+|
+  < DOUBLE_QUOTE_STRING: "\"" ( ~["\""] | "\\" "\"" )+ "\"" >
+|
+  < SINGLE_QUOTE_STRING: "\'" ( ~["\'"] | "\\" "\'" )+ "\'" >
+|
+  < METHOD_ARGUMENTS: "(" ( ~[")"] | "\\" ")" )* ")" >
+|
+  < CONDITION: "[" ( ~["]"] | "\\" "]" )+ "]" >
+|
+  < UNQUOTED_STRING: ( ~[" ", "\t", "\n", "\r", ":", ";", "*", "-", "(", ")", "[", "]", ".", "{", "}", "<", ">", "\"", "\'"] )+ >
+}
+
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: ("//" | "#")  (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+void outermostMethodDescription() :
+{
+}
+{
+  outermostSignature()
+  (
+    methodBody()
+  ) ?
+}
+
+void aMethodDescription() :
+{
+}
+{
+  signature()
+  (
+    <STATEMENT_END>
+    |
+    methodBody()
+  ) 
+}
+
+void outermostSignature() :
+{
+  String returnValue = null;
+  ObjectIdentifier oi;
+  MethodIdentifier mi = new MethodIdentifier();
+  mi.setMethodName("foo");
+}
+{
+(
+  oi = objectIdentifier()
+  (
+  <PERIOD>
+  mi = methodIdentifier()
+  ) ?
+  (
+    <RETURN_MARKER>
+    returnValue = returnValue()
+  ) ?
+)
+    {
+      processSignature(oi, mi, returnValue);
+    }
+}
+
+void signature() :
+{
+  String returnValue = null;
+  ObjectIdentifier oi;
+  MethodIdentifier mi;
+}
+{
+(
+  oi = objectIdentifier()
+  <PERIOD>
+  mi = methodIdentifier()
+  (
+    <RETURN_MARKER>
+    returnValue = returnValue()
+  ) ?
+)
+    {
+      processSignature(oi, mi, returnValue);
+    }
+}
+
+void methodBody() :
+{
+}
+{
+  <OPEN_BRACE>
+    {
+      methodExecutionStack.push(newMethodExecution);
+    }
+  (
+    aMethodDescription()
+  ) *
+  <CLOSE_BRACE>
+    {
+      methodExecutionStack.pop();
+    }
+}
+
+ObjectIdentifier objectIdentifier() :
+{
+  String s;
+  ObjectIdentifier oi = new ObjectIdentifier();
+}
+{
+(
+  ( 
+    s = objectName() 
+	{
+	  oi.setObjectName(s);
+	}
+    (
+      s = className()
+	{
+	  oi.setClassName(s);
+	}
+    ) ?
+    (
+      s = stereotype()
+	{
+	  oi.setStereotype(s);
+	}
+    ) ?
+  )
+|
+  (
+    s = className()
+	{
+	  oi.setClassName(s);
+	}
+    (
+      s = stereotype()
+	{
+	  oi.setStereotype(s);
+	}
+    ) ?
+  )
+| 
+  (
+    s = stereotype()
+	{
+	  oi.setStereotype(s);
+	}
+  )
+)
+	{
+	  return oi;
+	}
+}
+
+MethodIdentifier methodIdentifier() :
+{
+  MethodIdentifier mi = new MethodIdentifier();
+  String s;
+  Token t;
+}
+{
+  (
+    <ITERATION_MARKER>
+	{
+	  mi.setIteration(true);
+	}
+  ) ?
+  (
+    t = <CONDITION>
+	{
+	  mi.setCondition(t.image);
+    }
+  ) ?
+  (
+    s = stringIdentifier()
+        {
+          mi.setMethodName(s);
+        }
+    |
+    s = stereotype()
+        {
+          mi.setStereotype(s);
+        }
+  )
+  (
+    t = <METHOD_ARGUMENTS>
+    {
+      mi.setArguments(t.image);
+    }
+  ) ?
+
+	{
+	  return mi;
+	}
+}
+
+String objectName() :
+{
+  String s;
+}
+{
+  s = stringIdentifier()
+	{
+	  return s;
+	}
+}
+
+String className() :
+{
+  String s;
+}
+{
+  ":"
+  s = stringIdentifier()
+	{
+	  return ":" + s;
+	}
+}
+
+String returnValue() :
+{
+  String s;
+}
+{
+  s = stringIdentifier()
+	{
+	  return s;
+	}
+}
+
+String stereotype() :
+{
+  Token t;
+}
+{
+  t = <STEREOTYPE>
+ 	{
+	  return t.image;
+        }
+}
+
+String stringIdentifier() :
+{
+  Token t;
+}
+{
+  t = <UNQUOTED_STRING>
+	{
+	  return t.image;
+        }
+|
+  t = <DOUBLE_QUOTE_STRING>
+	{
+	  return stripQuotes(t.image, '"');
+	}
+|
+  t = <SINGLE_QUOTE_STRING>
+	{
+	  return stripQuotes(t.image, '\'');
+	}
+}

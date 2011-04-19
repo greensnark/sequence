@@ -1,0 +1,30 @@
+<idea-plugin>
+
+    <name>ZanthanSequence</name>
+
+    <description>
+        A simple plugin for drawing sequence diagrams
+    </description>
+
+    <version>1.0</version>
+
+    <vendor>Alex Moffat (ajm@zanthancom)</vendor>
+
+    <idea-version min="3.0" max="3.1"/>
+
+    <project-components>
+        <component>
+            <implementation-class>com.zanthan.sequence.intellij.SequenceProjectPlugin</implementation-class>
+            <interface-class>com.zanthan.sequence.intellij.SequenceProjectPlugin</interface-class>
+        </component>
+    </project-components>
+
+    <actions>
+        <action id="Zanthan.SequenceProjectPlugin.RecordCall"
+            class="com.zanthan.sequence.intellij.RecordCall" text="_Record Call"
+            description='Record this call on the sequence diagram'>
+            <keyboard-shortcut first-keystroke="alt Z" second-keystroke="R" keymap="$default"/>
+        </action>
+    </actions>
+
+</idea-plugin>

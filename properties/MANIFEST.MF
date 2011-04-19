@@ -1,0 +1,4 @@
+Main-Class: com.zanthan.sequence.Main
+
+Name: com/zanthan/sequence
+

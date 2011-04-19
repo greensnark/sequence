@@ -1,0 +1,46 @@
+SEQUENCE is a simple program for sketching uml sequence diagrams and
+saving them as png images. Diagrams are entered and edited as a text
+representation and automatically laid out by the program. It is
+released under the LGPL, see the file COPYING for details.
+
+To run SEQUENCE just type
+
+java -jar sequence.jar
+
+The example option under the help menu will load an example sequence
+diagram. The text representation looks like
+
+(anObject aMethod aReturn
+  (anotherObject anotherMethod)
+  (thirdObject thirdMethod anotherReturn))
+
+where the general pattern is
+
+CALL -> ( calledObjectName calledMethodName returnType? CALL* )
+
+The calledObjecName, calledMethodName and optional returnType can
+include spaces if surrounded by single or double quotes. To include a 
+double quote in a double quoted string or a single quote in a single
+quoted string you can escape it with a \.
+
+To compile the program you'll need to have junit, log4j, and the java
+swing look and feel icons available. You also need to modify runant.sh
+and build.xml. In runant.sh you need to change the paths so that they
+point to the locations where you have ant and java installed. In
+build.xml the three paths with id "junit.jar", "log4j.jar" and
+"jlfgr.jar" need to be changed to point to the correct locations. I
+normally create a lib directory and symbolically link the jar files
+there.
+
+You can modify the colors (colours) and whether or not the return
+types are shown on the diagram using the preferences option on the
+edit menu. These preferences are saved between sessions if you specify
+a preferences file when you start the program. So
+
+java -Dzanthan.prefs=MyPrefs.properties -jar sequence.jar
+
+will save your preference changes to the MyPrefs.properties file.
+
+Any suggestions for improvement  gratefully received at
+alexmoffat@yahoo.com.
+

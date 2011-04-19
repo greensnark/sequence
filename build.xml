@@ -1,0 +1,272 @@
+<?xml version='1.0' ?>
+<project name="com.zanthan.sequence"
+    default="all">
+
+    <property name="rootdir"
+        value="${basedir}"/>
+
+    <property name="src.dir"
+        value="${rootdir}/src"/>
+
+    <property name="build.src.dir"
+        value="${rootdir}/build/src"/>
+
+    <property name="src.intellij.dir"
+        value="${rootdir}/src-intellij"/>
+
+    <property name="properties.dir"
+        value="${rootdir}/properties"/>
+
+    <property name="help.dir"
+        value="${rootdir}/help"/>
+
+    <property name="log4j.xml"
+        value="${properties.dir}/log4j.xml"/>
+
+    <property name="manifest"
+        value="${properties.dir}/MANIFEST.MF"/>
+
+    <property name="classes.dir"
+        value="${rootdir}/classes"/>
+
+    <property name="lib.dir"
+        value="${rootdir}/lib"/>
+
+    <property name="lib.intellij.dir"
+        value="/usr/local/IntelliJ-IDEA-3.0.1/lib"/>
+
+    <property name="dist.dir"
+        value="${rootdir}/dist"/>
+
+    <property name="dist.jar"
+        value="${rootdir}/sequence.jar"/>
+
+    <property name="intellij.jar"
+        value="${rootdir}/sequence_plugin.jar"/>
+
+    <property name="dist.srcjar"
+        value="${rootdir}/sequence_src.jar"/>
+
+    <path id="junit.jar">
+        <fileset dir="${lib.dir}">
+            <include name="junit.jar"/>
+        </fileset>
+    </path>
+
+    <path id="log4j.jar">
+        <fileset dir="${lib.dir}">
+            <include name="log4j.jar"/>
+        </fileset>
+    </path>
+
+    <path id="jlfgr.jar">
+        <fileset dir="${lib.dir}">
+            <include name="jlfgr-1_0.jar"/>
+        </fileset>
+    </path>
+
+    <path id="jh.jar">
+        <fileset dir="${lib.dir}">
+            <include name="jh.jar"/>
+        </fileset>
+    </path>
+
+    <path id="classpath.compile">
+        <path refid="junit.jar"/>
+        <path refid="log4j.jar"/>
+        <path refid="jlfgr.jar"/>
+        <path refid="jh.jar"/>
+    </path>
+
+    <path id="classpath.intellij.compile">
+        <fileset dir="${lib.intellij.dir}">
+            <include name="jdom.jar"/>
+            <include name="idea.jar"/>
+        </fileset>
+    </path>
+
+    <path id="classpath.run">
+        <path refid="classpath.compile"/>
+        <pathelement path="${classes.dir}"/>
+        <pathelement path="${properties.dir}"/>
+        <pathelement path="${rootdir}"/>
+    </path>
+
+    <path id="classpath.test">
+        <path refid="classpath.compile"/>
+        <pathelement path="${classes.dir}"/>
+        <pathelement path="${properties.dir}"/>
+    </path>
+
+    <target name="prepare">
+        <mkdir dir="${src.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="clean">
+
+        <delete includeEmptyDirs="true" failOnError="false">
+            <fileset dir="${classes.dir}"/>
+            <fileset dir="${dist.dir}"/>
+        </delete>
+
+    </target>
+
+    <target name="prepareParser">
+        <exec dir="src/com/zanthan/sequence/parser/alternate"
+              executable="${rootdir}/javacc/bin/javacc">
+          <arg value="AlternateParser.jj"/>
+        </exec>
+    </target>
+
+    <target name="compile"
+        depends="prepare, prepareParser">
+
+        <javac destdir="${classes.dir}"
+            deprecation="true"
+            debug="true"
+            includeAntRuntime="false">
+            <src path="${src.dir}"/>
+            <src path="${build.src.dir}"/>
+            <classpath refid="classpath.compile"/>
+        </javac>
+
+        <copy todir="${classes.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+            </fileset>
+            <fileset dir="${build.src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="compile.intellij"
+        depends="compile">
+
+        <javac destdir="${classes.dir}"
+            deprecation="true"
+            debug="true"
+            includeAntRuntime="false">
+            <src path="${src.intellij.dir}"/>
+            <classpath>
+                <path location="${classes.dir}"/>
+                <path refid="classpath.compile"/>
+                <path refid="classpath.intellij.compile"/>
+            </classpath>
+        </javac>
+
+    </target>
+
+    <target name="jar.intellij"
+        depends="compile.intellij">
+
+        <mkdir dir="${dist.dir}/temp"/>
+
+        <unzip src="${lib.dir}/jlfgr-1_0.jar"
+            dest="${dist.dir}/temp"/>
+
+        <jar jarfile="${intellij.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="${dist.dir}/temp"/>
+            <metainf dir="${properties.dir}">
+                <include name="plugin.xml"/>
+            </metainf>
+        </jar>
+
+        <delete dir="${dist.dir}/temp"/>
+    </target>
+
+    <target name="jar"
+        depends="clean,compile">
+
+        <mkdir dir="${dist.dir}/classes"/>
+
+        <copy todir="${dist.dir}/classes">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+            </fileset>
+            <fileset dir="${properties.dir}">
+                <include name="log4j.xml"/>
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="help/**"/>
+            </fileset>
+        </copy>
+
+        <unzip src="${lib.dir}/log4j.jar"
+            dest="${dist.dir}/classes"/>
+
+        <unzip src="${lib.dir}/jlfgr-1_0.jar"
+            dest="${dist.dir}/classes"/>
+
+        <unzip src="${lib.dir}/jh.jar"
+            dest="${dist.dir}/classes"/>
+
+        <delete dir="${dist.dir}/classes/META-INF"/>
+
+        <jar jarfile="${dist.jar}" manifest="${manifest}">
+            <fileset dir="${dist.dir}/classes"/>
+            <fileset dir="${rootdir}">
+                <include name="help/**"/>
+            </fileset>
+        </jar>
+
+        <delete dir="${dist.dir}/classes"/>
+
+    </target>
+
+    <target name="dist"
+        depends="jar">
+
+        <jar jarfile="${dist.srcjar}">
+            <fileset dir="${rootdir}">
+                <include name="build.xml"/>
+                <include name="build.test.xml"/>
+                <include name="COPYING"/>
+                <include name="LICENSES"/>
+                <include name="README"/>
+                <include name="runant.sh"/>
+                <include name="src/**"/>
+                <include name="src-test/**"/>
+                <include name="build/**"/>
+                <include name="properties/**"/>
+                <include name="properties-test/**"/>
+                <include name="help/**"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="runSequence"
+        depends="compile">
+
+        <java classname="com.zanthan.sequence.Main" fork="yes">
+            <jvmarg value="-Dprefs=Preferences.properties"/>
+            <classpath refid="classpath.run"/>
+        </java>
+
+    </target>
+
+    <target name="runHeadless"
+        depends="compile">
+
+        <java classname="com.zanthan.sequence.Main" fork="yes">
+            <jvmarg value="-Djava.awt.headless=true"/>
+            <jvmarg value="-Dprefs=Preferences.properties"/>
+            <arg line="temp.txt"/>
+            <classpath refid="classpath.run"/>
+        </java>
+
+    </target>
+</project>
+
+
