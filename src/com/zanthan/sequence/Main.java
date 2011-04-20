@@ -46,7 +46,13 @@ public class Main {
             log.error("Use java -jar sequence.jar [--use_old_parser] --headless <input_file_name>");
             System.exit(1);
         }
-        String inFileName = (String) args.get(0);
+
+        for (Object filename : args) {
+            renderDiagramPNG(filename.toString());
+        }
+    }
+
+    private static void renderDiagramPNG(String inFileName) {
         String outFileName = inFileName;
         int dotPosition = outFileName.lastIndexOf('.');
         if (dotPosition > -1) {
@@ -56,9 +62,10 @@ public class Main {
         System.out.println("Reading \"" + inFileName + "\" " +
                            "and creating \"" + outFileName + "\".");
         try {
-            PngCreator pngCreator = new PngCreator(inFileName, outFileName, useOldParser);
+            PngCreator pngCreator =
+                new PngCreator(inFileName, outFileName, useOldParser);
             pngCreator.output();
-            System.out.println("Done.");
+            System.out.println("Done saving: " + outFileName + ".");
         } catch (IOException e) {
             log.error(e);
             System.out.println("Error occurred.");
