@@ -1,7 +1,13 @@
 <?xml version='1.0' ?>
 <project name="com.zanthan.sequence"
-    default="all">
+    default="jar">
 
+    <property name="script.extension" value=""/>
+  
+    <condition property="script.extension" value=".bat">
+      <os family="windows"/>
+    </condition>
+    
     <property name="rootdir"
         value="${basedir}"/>
 
@@ -116,7 +122,7 @@
 
     <target name="prepareParser">
         <exec dir="src/com/zanthan/sequence/parser/alternate"
-              executable="${rootdir}/javacc/bin/javacc">
+              executable="${rootdir}/javacc/bin/javacc${script.extension}">
           <arg value="AlternateParser.jj"/>
         </exec>
     </target>

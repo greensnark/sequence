@@ -1,4 +1,5 @@
 \#*
+*.sw[op]
 .#*
 classes
 build
