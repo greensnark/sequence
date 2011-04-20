@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.net.URL;
 
@@ -71,7 +72,7 @@ public class Sequence
      *
      * @param offerParserChoice if true then a button is provided to switch parsers
      */
-    public Sequence(boolean offerParserChoice) {
+    public Sequence(boolean offerParserChoice, List args) {
 
         initializeHelpBroker();
 
@@ -146,6 +147,19 @@ public class Sequence
         sequencePanel.setDividerLocation(0.6d);
 
         sequencePanel.getModel().addPropertyChangeListener(Model.FILE_PROPERTY_NAME, this);
+
+        openFirstFile(args);
+    }
+
+    private void openFirstFile(List names) {
+        if (names == null)
+            return;
+
+        final String firstFilename = (String) names.get(0);
+        final File firstFile = new File(firstFilename);
+        if (firstFile.exists()) {
+            sequencePanel.getModel().readFromFile(firstFile);
+        }
     }
 
     /**

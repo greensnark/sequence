@@ -72,7 +72,7 @@ public class Main {
 
     private static void runWithDisplay(List args) {
         determineInitialDirectory(args);
-        Sequence sequence = new Sequence(offerParserChoice);
+        Sequence sequence = new Sequence(offerParserChoice, args);
     }
 
     private static void determineInitialDirectory(List args) {

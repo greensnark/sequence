@@ -98,7 +98,7 @@ public class Model {
         return true;
     }
 
-    boolean readFromFile(File f) {
+    public boolean readFromFile(File f) {
         try {
             StringBuffer sb = new StringBuffer(1024);
             BufferedReader br = new BufferedReader(new FileReader(f));
