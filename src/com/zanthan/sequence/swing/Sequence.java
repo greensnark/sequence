@@ -38,6 +38,7 @@ import javax.swing.JSeparator;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import javax.help.HelpBroker;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -158,7 +159,11 @@ public class Sequence
         final String firstFilename = (String) names.get(0);
         final File firstFile = new File(firstFilename);
         if (firstFile.exists()) {
-            sequencePanel.getModel().readFromFile(firstFile);
+            SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        sequencePanel.getModel().readFromFile(firstFile);
+                    }
+                });
         }
     }
 
