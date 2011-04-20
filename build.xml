@@ -74,7 +74,7 @@
     <path id="classpath.compile">
         <path refid="junit.jar"/>
         <path refid="log4j.jar"/>
-        <path refid="jlfgr.jar"/>
+        <!-- <path refid="jlfgr.jar"/> -->
         <path refid="jh.jar"/>
     </path>
 
@@ -167,8 +167,8 @@
 
         <mkdir dir="${dist.dir}/temp"/>
 
-        <unzip src="${lib.dir}/jlfgr-1_0.jar"
-            dest="${dist.dir}/temp"/>
+        <!-- <unzip src="${lib.dir}/jlfgr-1_0.jar" -->
+        <!--     dest="${dist.dir}/temp"/> -->
 
         <jar jarfile="${intellij.jar}">
             <fileset dir="${classes.dir}">
